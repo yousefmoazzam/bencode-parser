@@ -26,6 +26,10 @@ test-suite bencode-parser-test
         base,
         hspec,
         hspec-discover,
+        hspec-megaparsec,
+        megaparsec,
         bencode-parser
     build-tool-depends:
         hspec-discover:hspec-discover
+    other-modules:
+        ParseSpec
