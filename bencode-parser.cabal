@@ -1,0 +1,31 @@
+cabal-version:      3.8
+name:               bencode-parser
+version:            0.1.0.0
+author:             Yousef Moazzam
+maintainer:         yousefmoazzam@hotmail.co.uk
+
+common common-settings
+    default-language: Haskell2010
+    ghc-options:
+        -Wall
+
+library
+    import:           common-settings
+    exposed-modules:  BencodeParser
+    build-depends:
+        base,
+        megaparsec
+    hs-source-dirs:   src
+
+test-suite bencode-parser-test
+    import:           common-settings
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    build-depends:
+        base,
+        hspec,
+        hspec-discover,
+        bencode-parser
+    build-tool-depends:
+        hspec-discover:hspec-discover
