@@ -96,6 +96,19 @@ spec =
               expectedMap = fromList [(B.pack hello, BInteger 1234)]
            in -- ASCII for `d5:helloi1234ee`
               parse parseDict "" input `shouldParse` BDict expectedMap
+
+      it
+        "Parse bencoded dict containing single key and list value"
+        $ do
+          let key = [53, 58] ++ hello
+              goodbye = [103, 111, 111, 100, 98, 121, 101]
+              item1 = [55, 58] ++ goodbye
+              item2 = [51, 58] ++ foo
+              input = B.pack $ [100] ++ key ++ [108] ++ item1 ++ item2 ++ [101, 101]
+              expectedList = BList [BByteString $ B.pack goodbye, BByteString $ B.pack foo]
+              expectedMap = fromList [(B.pack hello, expectedList)]
+           in -- ASCII for `d5:hellol7:goodbye3:fooee`
+              parse parseDict "" input `shouldParse` BDict expectedMap
   where
     num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]
