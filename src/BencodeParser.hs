@@ -51,7 +51,7 @@ parseList :: Parser BencodeData
 parseList =
   BList
     <$> ( parseL
-            *> Text.Megaparsec.some (parseByteString <|> parseInt <|> parseList <|> parseDict)
+            *> Text.Megaparsec.some parseBencode
             >>= \strings ->
               parseE
                 *> pure strings
@@ -74,7 +74,7 @@ parseDict =
 parseDictPair :: Parser (ByteString, BencodeData)
 parseDictPair =
   parseByteString >>= \key ->
-    parseByteString <|> parseInt <|> parseList <|> parseDict >>= \val ->
+    parseBencode >>= \val ->
       case key of
         BByteString keyByteString -> pure (keyByteString, val)
         _ -> error "Expected bytestring variant for dict key"
