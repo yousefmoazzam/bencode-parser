@@ -19,7 +19,7 @@ parseInt :: Parser BencodeData
 parseInt =
   BInteger
     <$> ( parseI
-            *> L.decimal
+            *> L.signed (pure ()) L.decimal
             >>= \val ->
               parseE
                 *> pure val

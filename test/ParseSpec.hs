@@ -15,3 +15,8 @@ spec =
         "Bencoded positive integer parses to integer variant with correct value"
         -- ASCII for `i1234e`
         (parse parseInt "" (B.pack [105, 49, 50, 51, 52, 101]) `shouldParse` BInteger 1234)
+
+      it
+        "Bencoded negative integer parses to integer variant with correct value"
+        -- ASCII for `i-1234e`
+        (parse parseInt "" (B.pack [105, 45, 49, 50, 51, 52, 101]) `shouldParse` BInteger (-1234))
