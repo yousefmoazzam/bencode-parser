@@ -70,7 +70,7 @@ parseDict =
 parseDictPair :: Parser (ByteString, BencodeData)
 parseDictPair =
   parseByteString >>= \key ->
-    parseByteString >>= \val ->
+    parseByteString <|> parseInt >>= \val ->
       case key of
         BByteString keyByteString -> pure (keyByteString, val)
         _ -> error "Expected bytestring variant for dict key"
