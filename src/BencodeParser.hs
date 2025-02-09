@@ -28,7 +28,6 @@ parseInt =
         )
   where
     parseI = void (char 105) -- ASCII for `i`
-    parseE = void (char 101) -- ASCII for `e`
 
 parseByteString :: Parser BencodeData
 parseByteString =
@@ -53,4 +52,7 @@ parseList =
         )
   where
     parseL = void (char 108) -- ASCII for `l`
-    parseE = void (char 101) -- ASCII for `e`
+
+-- | Matches ASCII code for `e` character
+parseE :: Parser ()
+parseE = void (char 101)
