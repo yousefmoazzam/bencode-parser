@@ -23,8 +23,9 @@ spec =
 
       it
         "Bencoded bytestring parses to bytestring variant with correct value"
-        -- ASCII for `5:hello`
-        (parse parseByteString "" input `shouldParse` BByteString (B.pack hello))
+        $ do
+          let input = B.pack ([53, 58] ++ hello)
+           in -- ASCII for `5:hello`
+              (parse parseByteString "" input `shouldParse` BByteString (B.pack hello))
   where
     hello = [104, 101, 108, 108, 111]
-    input = B.pack ([53, 58] ++ hello)
