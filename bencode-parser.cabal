@@ -14,7 +14,8 @@ library
     exposed-modules:  BencodeParser
     build-depends:
         base,
-        megaparsec
+        megaparsec,
+        bytestring
     hs-source-dirs:   src
 
 test-suite bencode-parser-test
@@ -28,6 +29,7 @@ test-suite bencode-parser-test
         hspec-discover,
         hspec-megaparsec,
         megaparsec,
+        bytestring,
         bencode-parser
     build-tool-depends:
         hspec-discover:hspec-discover

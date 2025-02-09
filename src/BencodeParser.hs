@@ -1,17 +1,18 @@
 module BencodeParser (BencodeData (BInteger), parseInt) where
 
 import Control.Monad (void)
+import Data.ByteString (ByteString)
 import Data.Void (Void)
 import Text.Megaparsec
-import Text.Megaparsec.Char (char)
-import qualified Text.Megaparsec.Char.Lexer as L
+import Text.Megaparsec.Byte (char)
+import qualified Text.Megaparsec.Byte.Lexer as L
 
 -- | Bencoded data types
 data BencodeData
   = BInteger Int
   deriving (Eq, Show)
 
-type Parser = Parsec Void String
+type Parser = Parsec Void ByteString
 
 -- | Parse bencoded integer
 parseInt :: Parser BencodeData
@@ -24,5 +25,5 @@ parseInt =
                 *> pure val
         )
   where
-    parseI = void (char 'i')
-    parseE = void (char 'e')
+    parseI = void (char 105) -- ASCII for `i`
+    parseE = void (char 101) -- ASCII for `e`
