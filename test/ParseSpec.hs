@@ -127,6 +127,17 @@ spec =
               expectedMap = fromList [(B.pack outer, BDict expectedInnerMap)]
            in -- ASCII for `d5:outerd5:hello7:goodbye3:fooi1234eee`
               parse parseDict "" input `shouldParse` BDict expectedMap
+
+      it
+        "Parser bencoded list containing dict"
+        $ do
+          let goodbye = [103, 111, 111, 100, 98, 121, 101]
+              key = [53, 58] ++ hello
+              value = [55, 58] ++ goodbye
+              input = B.pack $ [108, 100] ++ key ++ value ++ [101, 101]
+              expectedMap = fromList [(B.pack hello, BByteString $ B.pack goodbye)]
+           in -- ASCII for `ld5:hello7:goodbyeee`
+              parse parseList "" input `shouldParse` BList [BDict expectedMap]
   where
     num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]
