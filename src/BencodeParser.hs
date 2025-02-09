@@ -1,4 +1,4 @@
-module BencodeParser (BencodeData (..), parseInt, parseByteString, parseList, parseDict) where
+module BencodeParser (BencodeData (..), parseBencode) where
 
 import Control.Monad (void)
 import Data.ByteString (ByteString)
@@ -17,6 +17,10 @@ data BencodeData
   deriving (Eq, Show)
 
 type Parser = Parsec Void ByteString
+
+-- | Parse bencoded data
+parseBencode :: Parser BencodeData
+parseBencode = parseInt <|> parseByteString <|> parseList <|> parseDict
 
 -- | Parse bencoded integer
 parseInt :: Parser BencodeData

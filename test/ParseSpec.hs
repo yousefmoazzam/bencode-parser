@@ -1,6 +1,6 @@
 module ParseSpec where
 
-import BencodeParser (BencodeData (..), parseByteString, parseDict, parseInt, parseList)
+import BencodeParser (BencodeData (..), parseBencode)
 import qualified Data.ByteString as B
 import Data.Map
 import Test.Hspec
@@ -15,26 +15,26 @@ spec =
       it
         "Parse bencoded positive integer"
         -- ASCII for `i1234e`
-        (parse parseInt "" (B.pack $ [105] ++ num ++ [101]) `shouldParse` BInteger 1234)
+        (parse parseBencode "" (B.pack $ [105] ++ num ++ [101]) `shouldParse` BInteger 1234)
 
       it
         "Parse bencoded negative integer"
         -- ASCII for `i-1234e`
-        (parse parseInt "" (B.pack $ [105, 45] ++ num ++ [101]) `shouldParse` BInteger (-1234))
+        (parse parseBencode "" (B.pack $ [105, 45] ++ num ++ [101]) `shouldParse` BInteger (-1234))
 
       it
         "Parse bencoded bytestring"
         $ do
           let input = B.pack ([53, 58] ++ hello)
            in -- ASCII for `5:hello`
-              (parse parseByteString "" input `shouldParse` BByteString (B.pack hello))
+              (parse parseBencode "" input `shouldParse` BByteString (B.pack hello))
 
       it
         "Parse bencoded list with single bytestring element"
         $ do
           let input = B.pack ([108, 53, 58] ++ hello ++ [101])
            in -- ASCII for `l5:helloe`
-              parse parseList "" input `shouldParse` BList [BByteString $ B.pack hello]
+              parse parseBencode "" input `shouldParse` BList [BByteString $ B.pack hello]
 
       it
         "Parse bencoded list with multiple bytestring elements"
@@ -42,7 +42,7 @@ spec =
           let input = B.pack ([108, 53, 58] ++ hello ++ [51, 58] ++ foo ++ [101])
               expectedList = [BByteString $ B.pack hello, BByteString $ B.pack foo]
            in -- ASCII for `l5:hello3:fooe`
-              parse parseList "" input `shouldParse` BList expectedList
+              parse parseBencode "" input `shouldParse` BList expectedList
 
       it
         "Parse bencoded list containing integer and bytestring"
@@ -50,7 +50,7 @@ spec =
           let input = B.pack ([108, 105] ++ num ++ [101] ++ [53, 58] ++ hello ++ [101])
               expectedList = [BInteger 1234, BByteString $ B.pack hello]
            in -- ASCII for `li1234e5:helloe`
-              parse parseList "" input `shouldParse` BList expectedList
+              parse parseBencode "" input `shouldParse` BList expectedList
 
       it
         "Parse nested bencoded lists"
@@ -61,7 +61,7 @@ spec =
               input = B.pack ([108] ++ bencodedInt ++ [108] ++ bencodedHello ++ bencodedFoo ++ [101, 101])
               expectedList = [BInteger 1234, BList [BByteString $ B.pack hello, BByteString $ B.pack foo]]
            in -- ASCII for `li1234el5:hello3:fooee`
-              parse parseList "" input `shouldParse` BList expectedList
+              parse parseBencode "" input `shouldParse` BList expectedList
 
       it
         "Parse bencoded dict containing single key and bytestring value"
@@ -71,7 +71,7 @@ spec =
               input = B.pack $ [100] ++ bencodedKey ++ bencodedValue ++ [101]
               expectedMap = fromList [(B.pack hello, BByteString $ B.pack foo)]
            in -- ASCII for `d5:hello3:fooe`
-              parse parseDict "" input `shouldParse` BDict expectedMap
+              parse parseBencode "" input `shouldParse` BDict expectedMap
 
       it
         "Parse bencoded dict containing multiple keys with bytestring values"
@@ -84,7 +84,7 @@ spec =
               input = B.pack $ [100] ++ key1 ++ value1 ++ key2 ++ value2 ++ [101]
               expectedMap = fromList [(B.pack hello, BByteString $ B.pack foo), (B.pack goodbye, BByteString $ B.pack bar)]
            in -- ASCII for `d5:hello3:foo7:goodbye3:bare`
-              parse parseDict "" input `shouldParse` BDict expectedMap
+              parse parseBencode "" input `shouldParse` BDict expectedMap
 
       it
         "Parse bencoded dict containing single key and integer value"
@@ -94,7 +94,7 @@ spec =
               input = B.pack $ [100] ++ key ++ value ++ [101]
               expectedMap = fromList [(B.pack hello, BInteger 1234)]
            in -- ASCII for `d5:helloi1234ee`
-              parse parseDict "" input `shouldParse` BDict expectedMap
+              parse parseBencode "" input `shouldParse` BDict expectedMap
 
       it
         "Parse bencoded dict containing single key and list value"
@@ -106,7 +106,7 @@ spec =
               expectedList = BList [BByteString $ B.pack goodbye, BByteString $ B.pack foo]
               expectedMap = fromList [(B.pack hello, expectedList)]
            in -- ASCII for `d5:hellol7:goodbye3:fooee`
-              parse parseDict "" input `shouldParse` BDict expectedMap
+              parse parseBencode "" input `shouldParse` BDict expectedMap
 
       it
         "Parse nested bencoded dicts"
@@ -123,7 +123,7 @@ spec =
               expectedInnerMap = fromList [(B.pack hello, BByteString $ B.pack goodbye), (B.pack foo, BInteger 1234)]
               expectedMap = fromList [(B.pack outer, BDict expectedInnerMap)]
            in -- ASCII for `d5:outerd5:hello7:goodbye3:fooi1234eee`
-              parse parseDict "" input `shouldParse` BDict expectedMap
+              parse parseBencode "" input `shouldParse` BDict expectedMap
 
       it
         "Parse bencoded list containing dict"
@@ -133,7 +133,7 @@ spec =
               input = B.pack $ [108, 100] ++ key ++ value ++ [101, 101]
               expectedMap = fromList [(B.pack hello, BByteString $ B.pack goodbye)]
            in -- ASCII for `ld5:hello7:goodbyeee`
-              parse parseList "" input `shouldParse` BList [BDict expectedMap]
+              parse parseBencode "" input `shouldParse` BList [BDict expectedMap]
   where
     num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]
