@@ -45,7 +45,7 @@ spec =
               parse parseList "" input `shouldParse` BList expectedList
 
       it
-        "Parser bencoded list containing integer and bytestring"
+        "Parse bencoded list containing integer and bytestring"
         $ do
           let input = B.pack ([108, 105] ++ num ++ [101] ++ [53, 58] ++ hello ++ [101])
               expectedList = [BInteger 1234, BByteString $ B.pack hello]
@@ -53,7 +53,7 @@ spec =
               parse parseList "" input `shouldParse` BList expectedList
 
       it
-        "Parser nested bencoded lists"
+        "Parse nested bencoded lists"
         $ do
           let bencodedHello = [53, 58] ++ hello
               bencodedFoo = [51, 58] ++ foo
@@ -126,7 +126,7 @@ spec =
               parse parseDict "" input `shouldParse` BDict expectedMap
 
       it
-        "Parser bencoded list containing dict"
+        "Parse bencoded list containing dict"
         $ do
           let key = [53, 58] ++ hello
               value = [55, 58] ++ goodbye
