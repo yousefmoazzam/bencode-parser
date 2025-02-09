@@ -109,6 +109,24 @@ spec =
               expectedMap = fromList [(B.pack hello, expectedList)]
            in -- ASCII for `d5:hellol7:goodbye3:fooee`
               parse parseDict "" input `shouldParse` BDict expectedMap
+
+      it
+        "Parse nested bencoded dicts"
+        $ do
+          let outer = [111, 117, 116, 101, 114]
+              outerKey = [53, 58] ++ outer
+              innerKey1 = [53, 58] ++ hello
+              innerKey2 = [51, 58] ++ foo
+              goodbye = [103, 111, 111, 100, 98, 121, 101]
+              innerVal1 = [55, 58] ++ goodbye
+              innerVal2 = [105] ++ num ++ [101]
+              pair1 = innerKey1 ++ innerVal1
+              pair2 = innerKey2 ++ innerVal2
+              input = B.pack $ [100] ++ outerKey ++ [100] ++ pair1 ++ pair2 ++ [101, 101]
+              expectedInnerMap = fromList [(B.pack hello, BByteString $ B.pack goodbye), (B.pack foo, BInteger 1234)]
+              expectedMap = fromList [(B.pack outer, BDict expectedInnerMap)]
+           in -- ASCII for `d5:outerd5:hello7:goodbye3:fooi1234eee`
+              parse parseDict "" input `shouldParse` BDict expectedMap
   where
     num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]
