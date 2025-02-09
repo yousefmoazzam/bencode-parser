@@ -78,7 +78,6 @@ spec =
         $ do
           let key1 = [53, 58] ++ hello
               value1 = [51, 58] ++ foo
-              goodbye = [103, 111, 111, 100, 98, 121, 101]
               key2 = [55, 58] ++ goodbye
               bar = [98, 97, 114]
               value2 = [51, 58] ++ bar
@@ -101,7 +100,6 @@ spec =
         "Parse bencoded dict containing single key and list value"
         $ do
           let key = [53, 58] ++ hello
-              goodbye = [103, 111, 111, 100, 98, 121, 101]
               item1 = [55, 58] ++ goodbye
               item2 = [51, 58] ++ foo
               input = B.pack $ [100] ++ key ++ [108] ++ item1 ++ item2 ++ [101, 101]
@@ -117,7 +115,6 @@ spec =
               outerKey = [53, 58] ++ outer
               innerKey1 = [53, 58] ++ hello
               innerKey2 = [51, 58] ++ foo
-              goodbye = [103, 111, 111, 100, 98, 121, 101]
               innerVal1 = [55, 58] ++ goodbye
               innerVal2 = [105] ++ num ++ [101]
               pair1 = innerKey1 ++ innerVal1
@@ -131,8 +128,7 @@ spec =
       it
         "Parser bencoded list containing dict"
         $ do
-          let goodbye = [103, 111, 111, 100, 98, 121, 101]
-              key = [53, 58] ++ hello
+          let key = [53, 58] ++ hello
               value = [55, 58] ++ goodbye
               input = B.pack $ [108, 100] ++ key ++ value ++ [101, 101]
               expectedMap = fromList [(B.pack hello, BByteString $ B.pack goodbye)]
@@ -142,3 +138,4 @@ spec =
     num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]
     foo = [102, 111, 111]
+    goodbye = [103, 111, 111, 100, 98, 121, 101]
