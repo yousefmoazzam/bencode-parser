@@ -45,10 +45,10 @@ parseList :: Parser BencodeData
 parseList =
   BList
     <$> ( parseL
-            *> parseByteString
-            >>= \str ->
+            *> Text.Megaparsec.some parseByteString
+            >>= \strings ->
               parseE
-                *> pure [str]
+                *> pure strings
         )
   where
     parseL = void (char 108) -- ASCII for `l`
