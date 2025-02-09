@@ -72,6 +72,20 @@ spec =
               expectedMap = fromList [(B.pack hello, BByteString $ B.pack foo)]
            in -- ASCII for `d5:hello3:fooe`
               parse parseDict "" input `shouldParse` BDict expectedMap
+
+      it
+        "Parse bencoded dict containing multiple keys with bytestring values"
+        $ do
+          let key1 = [53, 58] ++ hello
+              value1 = [51, 58] ++ foo
+              goodbye = [103, 111, 111, 100, 98, 121, 101]
+              key2 = [55, 58] ++ goodbye
+              bar = [98, 97, 114]
+              value2 = [51, 58] ++ bar
+              input = B.pack $ [100] ++ key1 ++ value1 ++ key2 ++ value2 ++ [101]
+              expectedMap = fromList [(B.pack hello, BByteString $ B.pack foo), (B.pack goodbye, BByteString $ B.pack bar)]
+           in -- ASCII for `d5:hello3:foo7:goodbye3:bare`
+              parse parseDict "" input `shouldParse` BDict expectedMap
   where
     num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]

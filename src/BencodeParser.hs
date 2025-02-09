@@ -59,10 +59,10 @@ parseDict :: Parser BencodeData
 parseDict =
   BDict
     <$> ( parseD
-            *> parseDictPair
-            >>= \(key, val) ->
+            *> Text.Megaparsec.some parseDictPair
+            >>= \pairs ->
               parseE
-                *> pure (fromList [(key, val)])
+                *> pure (fromList pairs)
         )
   where
     parseD = void $ char 100
