@@ -45,7 +45,7 @@ parseList :: Parser BencodeData
 parseList =
   BList
     <$> ( parseL
-            *> Text.Megaparsec.some parseByteString
+            *> Text.Megaparsec.some (parseByteString <|> parseInt)
             >>= \strings ->
               parseE
                 *> pure strings

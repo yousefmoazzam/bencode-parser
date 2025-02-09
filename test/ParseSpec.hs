@@ -42,6 +42,15 @@ spec =
               expectedList = [BByteString $ B.pack hello, BByteString $ B.pack foo]
            in -- ASCII for `l5:hello3:fooe`
               parse parseList "" input `shouldParse` BList expectedList
+
+      it
+        "Parser bencoded list containing integer and bytestring"
+        $ do
+          let num = [49, 50, 51, 52]
+              input = B.pack ([108, 105] ++ num ++ [101] ++ [53, 58] ++ hello ++ [101])
+              expectedList = [BInteger 1234, BByteString $ B.pack hello]
+           in -- ASCII for `li1234e5:helloe`
+              parse parseList "" input `shouldParse` BList expectedList
   where
     hello = [104, 101, 108, 108, 111]
     foo = [102, 111, 111]
