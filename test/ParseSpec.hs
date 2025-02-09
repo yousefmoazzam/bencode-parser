@@ -14,12 +14,12 @@ spec =
       it
         "Bencoded positive integer parses to integer variant with correct value"
         -- ASCII for `i1234e`
-        (parse parseInt "" (B.pack [105, 49, 50, 51, 52, 101]) `shouldParse` BInteger 1234)
+        (parse parseInt "" (B.pack $ [105] ++ num ++ [101]) `shouldParse` BInteger 1234)
 
       it
         "Bencoded negative integer parses to integer variant with correct value"
         -- ASCII for `i-1234e`
-        (parse parseInt "" (B.pack [105, 45, 49, 50, 51, 52, 101]) `shouldParse` BInteger (-1234))
+        (parse parseInt "" (B.pack $ [105, 45] ++ num ++ [101]) `shouldParse` BInteger (-1234))
 
       it
         "Bencoded bytestring parses to bytestring variant with correct value"
@@ -46,11 +46,11 @@ spec =
       it
         "Parser bencoded list containing integer and bytestring"
         $ do
-          let num = [49, 50, 51, 52]
-              input = B.pack ([108, 105] ++ num ++ [101] ++ [53, 58] ++ hello ++ [101])
+          let input = B.pack ([108, 105] ++ num ++ [101] ++ [53, 58] ++ hello ++ [101])
               expectedList = [BInteger 1234, BByteString $ B.pack hello]
            in -- ASCII for `li1234e5:helloe`
               parse parseList "" input `shouldParse` BList expectedList
   where
+    num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]
     foo = [102, 111, 111]
