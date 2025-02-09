@@ -1,4 +1,4 @@
-module BencodeParser (BencodeData (BInteger), parseInt) where
+module BencodeParser (BencodeData (..), parseInt, parseByteString) where
 
 import Control.Monad (void)
 import Data.ByteString (ByteString)
@@ -10,6 +10,7 @@ import qualified Text.Megaparsec.Byte.Lexer as L
 -- | Bencoded data types
 data BencodeData
   = BInteger Int
+  | BByteString ByteString
   deriving (Eq, Show)
 
 type Parser = Parsec Void ByteString
@@ -27,3 +28,15 @@ parseInt =
   where
     parseI = void (char 105) -- ASCII for `i`
     parseE = void (char 101) -- ASCII for `e`
+
+parseByteString :: Parser BencodeData
+parseByteString =
+  BByteString
+    <$> ( L.decimal >>= \len ->
+            parseColon
+              *> Text.Megaparsec.takeP Nothing len
+              >>= \str ->
+                pure str
+        )
+  where
+    parseColon = void (char 58) -- ASCII for `:`

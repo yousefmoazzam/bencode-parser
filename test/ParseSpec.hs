@@ -1,6 +1,6 @@
 module ParseSpec where
 
-import BencodeParser (BencodeData (BInteger), parseInt)
+import BencodeParser (BencodeData (..), parseByteString, parseInt)
 import qualified Data.ByteString as B
 import Test.Hspec
 import Test.Hspec.Megaparsec (shouldParse)
@@ -20,3 +20,11 @@ spec =
         "Bencoded negative integer parses to integer variant with correct value"
         -- ASCII for `i-1234e`
         (parse parseInt "" (B.pack [105, 45, 49, 50, 51, 52, 101]) `shouldParse` BInteger (-1234))
+
+      it
+        "Bencoded bytestring parses to bytestring variant with correct value"
+        -- ASCII for `5:hello`
+        (parse parseByteString "" input `shouldParse` BByteString (B.pack hello))
+  where
+    hello = [104, 101, 108, 108, 111]
+    input = B.pack ([53, 58] ++ hello)
