@@ -15,7 +15,8 @@ library
     build-depends:
         base,
         megaparsec,
-        bytestring
+        bytestring,
+        containers
     hs-source-dirs:   src
 
 test-suite bencode-parser-test
@@ -30,6 +31,7 @@ test-suite bencode-parser-test
         hspec-megaparsec,
         megaparsec,
         bytestring,
+        containers,
         bencode-parser
     build-tool-depends:
         hspec-discover:hspec-discover

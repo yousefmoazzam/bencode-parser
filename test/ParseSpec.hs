@@ -1,7 +1,8 @@
 module ParseSpec where
 
-import BencodeParser (BencodeData (..), parseByteString, parseInt, parseList)
+import BencodeParser (BencodeData (..), parseByteString, parseDict, parseInt, parseList)
 import qualified Data.ByteString as B
+import Data.Map
 import Test.Hspec
 import Test.Hspec.Megaparsec (shouldParse)
 import Text.Megaparsec (parse)
@@ -61,6 +62,16 @@ spec =
               expectedList = [BInteger 1234, BList [BByteString $ B.pack hello, BByteString $ B.pack foo]]
            in -- ASCII for `li1234el5:hello3:fooee`
               parse parseList "" input `shouldParse` BList expectedList
+
+      it
+        "Parse bencoded dict containing single key and bytestring value"
+        $ do
+          let bencodedKey = [53, 58] ++ hello
+              bencodedValue = [51, 58] ++ foo
+              input = B.pack $ [100] ++ bencodedKey ++ bencodedValue ++ [101]
+              expectedMap = fromList [(B.pack hello, BByteString $ B.pack foo)]
+           in -- ASCII for `d5:hello3:fooe`
+              parse parseDict "" input `shouldParse` BDict expectedMap
   where
     num = [49, 50, 51, 52]
     hello = [104, 101, 108, 108, 111]

@@ -1,7 +1,8 @@
-module BencodeParser (BencodeData (..), parseInt, parseByteString, parseList) where
+module BencodeParser (BencodeData (..), parseInt, parseByteString, parseList, parseDict) where
 
 import Control.Monad (void)
 import Data.ByteString (ByteString)
+import Data.Map
 import Data.Void (Void)
 import Text.Megaparsec
 import Text.Megaparsec.Byte (char)
@@ -12,6 +13,7 @@ data BencodeData
   = BInteger Int
   | BByteString ByteString
   | BList [BencodeData]
+  | BDict (Map ByteString BencodeData)
   deriving (Eq, Show)
 
 type Parser = Parsec Void ByteString
@@ -52,6 +54,26 @@ parseList =
         )
   where
     parseL = void (char 108) -- ASCII for `l`
+
+parseDict :: Parser BencodeData
+parseDict =
+  BDict
+    <$> ( parseD
+            *> parseDictPair
+            >>= \(key, val) ->
+              parseE
+                *> pure (fromList [(key, val)])
+        )
+  where
+    parseD = void $ char 100
+
+parseDictPair :: Parser (ByteString, BencodeData)
+parseDictPair =
+  parseByteString >>= \key ->
+    parseByteString >>= \val ->
+      case key of
+        BByteString keyByteString -> pure (keyByteString, val)
+        _ -> error "Expected bytestring variant for dict key"
 
 -- | Matches ASCII code for `e` character
 parseE :: Parser ()
