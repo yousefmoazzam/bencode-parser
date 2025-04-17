@@ -19,6 +19,18 @@ library
         containers
     hs-source-dirs:   src
 
+executable bencode-parser-gen
+  import: common-settings
+  hs-source-dirs: app
+  main-is: Main.hs
+  build-depends:
+      base
+    , bencode-parser
+    , bytestring
+    , megaparsec
+  ghc-options:
+    -O
+
 test-suite bencode-parser-test
     import:           common-settings
     type:             exitcode-stdio-1.0
